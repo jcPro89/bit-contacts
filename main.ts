@@ -1,9 +1,29 @@
-input.onButtonPressed(Button.AB, function () {
+input.onGesture(Gesture.Shake, function () {
     basic.clearScreen()
-    basic.showString(nombreActual)
+    modoListado = true
+    basic.showString("Nombres guardados:", 50)
+    for (let index = 0; index <= listaNombres.length - 1; index++) {
+        basic.clearScreen()
+        basic.showString("" + index + "-" + listaNombres[index])
+    }
+})
+input.onButtonPressed(Button.AB, function () {
+    listaNombres.push(nombreActual)
+    basic.clearScreen()
+    basic.showLeds(`
+        . . # . .
+        . . # . .
+        # # # # #
+        . . # . .
+        . . # . .
+        `)
+    basic.pause(100)
+    nombreActual = ""
 })
 input.onButtonPressed(Button.B, function () {
     nombreActual = "" + nombreActual + Teclado[caracterActual]
+    basic.showIcon(IconNames.Yes)
+    basic.pause(200)
 })
 function cargarTeclado() {
     Teclado[0] = "A"
@@ -45,24 +65,29 @@ function cargarTeclado() {
     Teclado[36] = "9"
 }
 let nombreActual = ""
-let caracterActual = 0
+let listaNombres: string[] = []
+let modoListado = false
 let Teclado: string[] = []
+let caracterActual = 0
+modoListado = false
+listaNombres = []
 nombreActual = ""
 cargarTeclado()
-basic.showString("Ingresa tu nombre", 50)
 basic.showString("" + (Teclado[0]))
 basic.forever(function () {
-    while (input.acceleration(Dimension.X) > 200) {
-        if (caracterActual < 36) {
-            caracterActual += 1
+    if (modoListado == false) {
+        while (input.acceleration(Dimension.X) > 200) {
+            if (caracterActual < 36) {
+                caracterActual += 1
+            }
+            basic.showString("" + (Teclado[caracterActual]), 256 - ((input.acceleration(Dimension.X) * 2) / 4))
         }
-        basic.showString("" + (Teclado[caracterActual]), 256 - ((input.acceleration(Dimension.X)) / 4))
-    }
-    while (input.acceleration(Dimension.X) < -200) {
-        basic.clearScreen()
-        if (caracterActual > 0) {
-            caracterActual += -1
+        while (input.acceleration(Dimension.X) < -200) {
+            basic.clearScreen()
+            if (caracterActual > 0) {
+                caracterActual += -1
+            }
+            basic.showString("" + (Teclado[caracterActual]), 256 - (-(input.acceleration(Dimension.X) * 2) / 4))
         }
-        basic.showString("" + (Teclado[caracterActual]), 256 - (-(input.acceleration(Dimension.X)) / 4))
     }
 })
