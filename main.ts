@@ -1,3 +1,10 @@
+input.onButtonPressed(Button.AB, function () {
+    basic.clearScreen()
+    basic.showString(nombreActual)
+})
+input.onButtonPressed(Button.B, function () {
+    nombreActual = "" + nombreActual + Teclado[caracterActual]
+})
 function cargarTeclado() {
     Teclado[0] = "A"
     Teclado[1] = "B"
@@ -37,9 +44,13 @@ function cargarTeclado() {
     Teclado[35] = "8"
     Teclado[36] = "9"
 }
+let nombreActual = ""
 let caracterActual = 0
 let Teclado: string[] = []
+nombreActual = ""
 cargarTeclado()
+basic.showString("Ingresa tu nombre", 50)
+basic.showString("" + (Teclado[0]))
 basic.forever(function () {
     while (input.acceleration(Dimension.X) > 200) {
         if (caracterActual < 36) {
