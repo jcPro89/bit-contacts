@@ -1,3 +1,50 @@
+function cargarTecladoNumero() {
+    tecladoNumeros[0] = "0"
+    tecladoNumeros[1] = "1"
+    tecladoNumeros[2] = "2"
+    tecladoNumeros[3] = "3"
+    tecladoNumeros[4] = "4"
+    tecladoNumeros[5] = "5"
+    tecladoNumeros[6] = "6"
+    tecladoNumeros[7] = "7"
+    tecladoNumeros[8] = "8"
+    tecladoNumeros[9] = "9"
+}
+function resetearVariables(seccionOrigen: string) {
+    cargarTecladoNombre()
+    establecerModo(0)
+    menuPrincipal = true
+    nombreActual = ""
+    registroActual = 0
+    ingresandoNombre = false
+    ingresandoTelefono = false
+    if (seccionOrigen != "opcionMenu") {
+        listaNombres = []
+        opcionesMenuPrincipal = []
+        listaTelefonos = []
+        opcionMenuActual = 1
+    }
+}
+function establecerModo(numOpcionMenu: number) {
+    modoAgregarContacto = numOpcionMenu == 1
+    modoListado = numOpcionMenu == 2
+    modoUpdate = numOpcionMenu == 3
+    modoBorrarContacto = numOpcionMenu == 4
+}
+input.onButtonPressed(Button.A, function () {
+    if (menuPrincipal) {
+        if (opcionMenuActual > 1) {
+            opcionMenuActual += -1
+        } else {
+            opcionMenuActual = 4
+        }
+    } else if (modoAgregarContacto || (modoListado || (modoUpdate || modoBorrarContacto))) {
+        menuPrincipal = true
+        resetearVariables("opcionMenu")
+    } else {
+
+    }
+})
 input.onGesture(Gesture.Shake, function () {
     basic.clearScreen()
     modoListado = true
@@ -8,86 +55,193 @@ input.onGesture(Gesture.Shake, function () {
     }
 })
 input.onButtonPressed(Button.AB, function () {
-    listaNombres.push(nombreActual)
-    basic.clearScreen()
-    basic.showLeds(`
-        . . # . .
-        . . # . .
-        # # # # #
-        . . # . .
-        . . # . .
-        `)
-    basic.pause(100)
-    nombreActual = ""
+    if (menuPrincipal) {
+        menuPrincipal = false
+        if (opcionMenuActual == 1) {
+            if (ingresandoNombre) {
+                telefono = ""
+                basic.clearScreen()
+                basic.showString("Ingresa el telefono", 50)
+                ingresandoTelefono = true
+                ingresandoNombre = false
+            } else {
+                nombre = ""
+                basic.clearScreen()
+                basic.showString("Ingresa el nombre", 50)
+                ingresandoNombre = true
+                modoAgregarContacto = true
+                modoBorrarContacto = false
+                modoListado = false
+                modoUpdate = false
+            }
+        } else if (opcionMenuActual == 2) {
+            if (listaNombres.length == 0) {
+                basic.clearScreen()
+                basic.showString("No hay registros", 50)
+            } else {
+                registroActual = 0
+                modoAgregarContacto = false
+                modoListado = true
+                modoUpdate = false
+                modoBorrarContacto = false
+            }
+        } else if (opcionMenuActual == 3) {
+            modoAgregarContacto = false
+            modoListado = true
+            modoUpdate = true
+            modoBorrarContacto = false
+        } else if (opcionMenuActual == 4) {
+            modoAgregarContacto = false
+            modoListado = false
+            modoUpdate = false
+            modoBorrarContacto = true
+        }
+    } else if (ingresandoNombre) {
+        listaNombres.push(nombre)
+        ingresandoNombre = false
+        ingresandoTelefono = true
+    } else if (ingresandoTelefono) {
+        listaTelefonos.push(telefono)
+        ingresandoTelefono = false
+        menuPrincipal = true
+    } else {
+
+    }
 })
 input.onButtonPressed(Button.B, function () {
-    nombreActual = "" + nombreActual + Teclado[caracterActual]
-    basic.showIcon(IconNames.Yes)
-    basic.pause(200)
+    if (ingresandoNombre) {
+        nombre = "" + nombre + tecladoLetras[caracterActual]
+        basic.showIcon(IconNames.Yes)
+        basic.pause(200)
+    } else if (menuPrincipal) {
+        if (opcionMenuActual < 4) {
+            opcionMenuActual += 1
+        } else {
+            opcionMenuActual = 1
+        }
+    } else if (ingresandoTelefono) {
+        telefono = "" + telefono + tecladoNumeros[caracterActual]
+        basic.showIcon(IconNames.Yes)
+        basic.pause(200)
+    } else if (modoListado) {
+        registroActual += 1
+    } else {
+
+    }
 })
-function cargarTeclado() {
-    Teclado[0] = "A"
-    Teclado[1] = "B"
-    Teclado[2] = "C"
-    Teclado[3] = "D"
-    Teclado[4] = "E"
-    Teclado[5] = "F"
-    Teclado[6] = "G"
-    Teclado[7] = "H"
-    Teclado[8] = "I"
-    Teclado[9] = "J"
-    Teclado[10] = "K"
-    Teclado[11] = "L"
-    Teclado[12] = "M"
-    Teclado[13] = "N"
-    Teclado[14] = "0"
-    Teclado[15] = "P"
-    Teclado[16] = "Q"
-    Teclado[17] = "R"
-    Teclado[18] = "S"
-    Teclado[19] = "T"
-    Teclado[20] = "U"
-    Teclado[21] = "V"
-    Teclado[22] = "W"
-    Teclado[23] = "X"
-    Teclado[24] = "Y"
-    Teclado[25] = "Z"
-    Teclado[26] = "_"
-    Teclado[27] = "0"
-    Teclado[28] = "1"
-    Teclado[29] = "2"
-    Teclado[30] = "3"
-    Teclado[31] = "4"
-    Teclado[32] = "5"
-    Teclado[33] = "6"
-    Teclado[34] = "7"
-    Teclado[35] = "8"
-    Teclado[36] = "9"
+function cargarTecladoNombre() {
+    tecladoLetras[0] = "A"
+    tecladoLetras[1] = "B"
+    tecladoLetras[2] = "C"
+    tecladoLetras[3] = "D"
+    tecladoLetras[4] = "E"
+    tecladoLetras[5] = "F"
+    tecladoLetras[6] = "G"
+    tecladoLetras[7] = "H"
+    tecladoLetras[8] = "I"
+    tecladoLetras[9] = "J"
+    tecladoLetras[10] = "K"
+    tecladoLetras[11] = "L"
+    tecladoLetras[12] = "M"
+    tecladoLetras[13] = "N"
+    tecladoLetras[14] = "0"
+    tecladoLetras[15] = "P"
+    tecladoLetras[16] = "Q"
+    tecladoLetras[17] = "R"
+    tecladoLetras[18] = "S"
+    tecladoLetras[19] = "T"
+    tecladoLetras[20] = "U"
+    tecladoLetras[21] = "V"
+    tecladoLetras[22] = "W"
+    tecladoLetras[23] = "X"
+    tecladoLetras[24] = "Y"
+    tecladoLetras[25] = "Z"
+    tecladoLetras[26] = "_"
 }
-let nombreActual = ""
-let listaNombres: string[] = []
+let nombre = ""
+let telefono = ""
+let modoBorrarContacto = false
+let modoUpdate = false
 let modoListado = false
-let Teclado: string[] = []
+let modoAgregarContacto = false
+let opcionMenuActual = 0
+let listaTelefonos: string[] = []
+let opcionesMenuPrincipal: number[] = []
+let listaNombres: string[] = []
+let ingresandoTelefono = false
+let ingresandoNombre = false
+let registroActual = 0
+let nombreActual = ""
+let menuPrincipal = false
+let tecladoNumeros: string[] = []
+let tecladoLetras: string[] = []
 let caracterActual = 0
-modoListado = false
-listaNombres = []
-nombreActual = ""
-cargarTeclado()
-basic.showString("" + (Teclado[0]))
+resetearVariables("inicio")
+basic.clearScreen()
+basic.showString("Menu", 50)
 basic.forever(function () {
-    if (modoListado == false) {
-        while (input.acceleration(Dimension.X) > 200) {
-            if (caracterActual < 36) {
-                caracterActual += 1
+    if (modoAgregarContacto) {
+        if (ingresandoNombre) {
+            while (input.acceleration(Dimension.X) > 200) {
+                if (caracterActual < tecladoLetras.length - 1) {
+                    caracterActual += 1
+                }
+                basic.showString("" + (tecladoLetras[caracterActual]), 256 - ((input.acceleration(Dimension.X) * 2) / 4))
             }
-            basic.showString("" + (Teclado[caracterActual]), 256 - ((input.acceleration(Dimension.X) * 2) / 4))
-        }
-        while (input.acceleration(Dimension.X) < -200) {
-            basic.clearScreen()
-            if (caracterActual > 0) {
-                caracterActual += -1
+            while (input.acceleration(Dimension.X) < -200) {
+                basic.clearScreen()
+                if (caracterActual > 0) {
+                    caracterActual += -1
+                }
+                basic.showString("" + (tecladoLetras[caracterActual]), 256 - (-(input.acceleration(Dimension.X) * 2) / 4))
             }
-            basic.showString("" + (Teclado[caracterActual]), 256 - (-(input.acceleration(Dimension.X) * 2) / 4))
+        } else {
+            while (input.acceleration(Dimension.X) > 200) {
+                if (caracterActual < tecladoNumeros.length - 1) {
+                    caracterActual += 1
+                }
+                basic.showString("" + (tecladoNumeros[caracterActual]), 256 - ((input.acceleration(Dimension.X) * 2) / 4))
+            }
+            while (input.acceleration(Dimension.X) < -200) {
+                basic.clearScreen()
+                if (caracterActual > 0) {
+                    caracterActual += -1
+                }
+                basic.showString("" + (tecladoNumeros[caracterActual]), 256 - (-(input.acceleration(Dimension.X) * 2) / 4))
+            }
         }
+    } else if (menuPrincipal) {
+        if (opcionMenuActual == 1) {
+            basic.showLeds(`
+                . . # . .
+                . . # . .
+                # # # # #
+                . . # . .
+                . . # . .
+                `)
+        } else if (opcionMenuActual == 2) {
+            basic.showLeds(`
+                # . # # #
+                . . . . .
+                # # # . #
+                . . . . .
+                # # . # #
+                `)
+        } else if (opcionMenuActual == 3) {
+            basic.showLeds(`
+                . . . . #
+                . . . # .
+                . . # . .
+                . . . . .
+                # . . . .
+                `)
+        } else if (opcionMenuActual == 4) {
+            basic.showIcon(IconNames.No)
+        }
+    } else if (modoListado) {
+        basic.showString("" + (listaNombres[registroActual]))
+        basic.showString("" + (listaTelefonos[registroActual]))
+    } else {
+
     }
 })
