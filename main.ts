@@ -74,10 +74,11 @@ input.onButtonPressed(Button.AB, function () {
                 modoListado = false
                 modoUpdate = false
             }
-        } else if (opcionMenuActual == 2) {
+        } else if (opcionMenuActual == 2 || opcionMenuActual == 3) {
             if (listaNombres.length == 0) {
                 basic.clearScreen()
                 basic.showString("No hay registros", 50)
+                menuPrincipal = false
             } else {
                 registroActual = 0
                 modoAgregarContacto = false
